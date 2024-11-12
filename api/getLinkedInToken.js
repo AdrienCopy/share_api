@@ -22,16 +22,46 @@ module.exports = async (req, res) => {
         });
 
         try {
-            const response = await fetch(url, {
+            // 1. Récupérer l'access token de LinkedIn
+            const response = await fetch(tokenUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: params
             });
+
             const data = await response.json();
-            res.status(200).json(data);
+
+            // Vérifiez si un token d'accès a été obtenu
+            if (data.error) {
+                throw new Error(data.error_description);
+            }
+
+            const accessToken = data.access_token;
+
+            // 2. Récupérer les informations de l'utilisateur LinkedIn
+            const userInfoUrl = 'https://api.linkedin.com/v2/me';
+            const userInfoResponse = await fetch(userInfoUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                }
+            });
+
+            const userInfo = await userInfoResponse.json();
+
+            // Vérifiez si l'utilisateur a été récupéré avec succès
+            if (userInfo.error) {
+                throw new Error(userInfo.error.message);
+            }
+
+            // Renvoyer l'ID de la personne (ou d'autres données de l'utilisateur)
+            const personId = userInfo.id;
+            res.status(200).json({ personId });
+
         } catch (error) {
+            // En cas d'erreur, renvoyer l'erreur au client
             res.status(500).json({ error: error.message });
         }
     } else {
