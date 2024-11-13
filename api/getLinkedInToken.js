@@ -30,17 +30,6 @@ module.exports = async (req, res) => {
                 body: params
             });
             const data = await response.json();
-
-            const userInfoResponse = await fetch('https://api.linkedin.com/v2/userinfo', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                }
-            });
-            const userInfo = await userInfoResponse.json();
-            console.log(userInfo);
-
             res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ error: error.message });
