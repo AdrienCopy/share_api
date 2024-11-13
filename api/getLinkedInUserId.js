@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
             if (data.error) {
                 throw new Error(data.message);
             }
-            res.status(200).json({ personId: data.id });
+            res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
