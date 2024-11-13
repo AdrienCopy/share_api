@@ -36,6 +36,7 @@ module.exports = async (req, res) => {
             });
 
             const shareData = await shareResponse.json();
+            console.log('?', shareData);
             if (shareData.error) throw new Error(shareData.message);
 
             res.status(200).json({ message: 'Partage réussi sur LinkedIn !' });
