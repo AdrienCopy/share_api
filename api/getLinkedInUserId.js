@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
 
         try {
             // Requête vers l'API LinkedIn pour obtenir l'ID de l'utilisateur
-            const response = await fetch('https://api.linkedin.com/v2/me', {
+            const response = await fetch('https://api.linkedin.com/v2/userinfo', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
