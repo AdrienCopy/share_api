@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-        const { accessToken, fullText, shareUrl } = req.body;
+        const { accessToken, fullText, shareUrl, personId } = req.body;
 
         try {
             const shareResponse = await fetch('https://api.linkedin.com/v2/ugcPosts', {
