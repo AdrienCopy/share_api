@@ -11,9 +11,23 @@ module.exports = async (req, res) => {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-        const { accessToken, fullText, shareUrl, personId } = req.body;
+        const { accessToken, fullText, shareUrl, personId, imageAsset } = req.body;
 
         try {
+            const shareBody = {
+                author: `urn:li:person:${personId}`,
+                lifecycleState: 'PUBLISHED',
+                specificContent: {
+                    'com.linkedin.ugc.ShareContent': {
+                        shareCommentary: { text: fullText },
+                        shareMediaCategory: imageAsset ? 'IMAGE' : 'ARTICLE', // Choisissez la catégorie selon l'image
+                        media: imageAsset
+                            ? [{ status: 'READY', media: `urn:li:digitalmediaAsset:${imageAsset}` }]
+                            : [{ status: 'READY', originalUrl: shareUrl, title: { text: 'Title of the article' } }]
+                    }
+                },
+                visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' }
+            };
             const shareResponse = await fetch('https://api.linkedin.com/v2/ugcPosts', {
                 method: 'POST',
                 headers: {
@@ -21,18 +35,7 @@ module.exports = async (req, res) => {
                     'Content-Type': 'application/json',
                     'X-Restli-Protocol-Version': '2.0.0'
                 },
-                body: JSON.stringify({
-                    author: `urn:li:person:${personId}`,
-                    lifecycleState: 'PUBLISHED',
-                    specificContent: {
-                        'com.linkedin.ugc.ShareContent': {
-                            shareCommentary: { text: fullText },
-                            shareMediaCategory: 'ARTICLE',
-                            media: [{ status: 'READY', originalUrl: shareUrl, title: { text: 'Title of the article' } }]
-                        }
-                    },
-                    visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' }
-                })
+                body: JSON.stringify(shareBody)
             });
 
             const shareData = await shareResponse.json();
