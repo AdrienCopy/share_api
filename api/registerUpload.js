@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
         const { accessToken, fileName } = req.body;
 
         try {
-            const registerResponse = await fetch('https://api.linkedin.com/v2/assets?action=registerUpload', {
+            const registerResponse = await fetch('https://api.linkedin.com/rest/assets?action=registerUpload', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
