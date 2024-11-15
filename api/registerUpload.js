@@ -10,10 +10,10 @@ module.exports = async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-        const { accessToken, fileName } = req.body;
+        const { accessToken, personId } = req.body;
 
         try {
-            const registerResponse = await fetch('https://api.linkedin.com/rest/assets?action=registerUpload', {
+            const registerResponse = await fetch('https://api.linkedin.com/v2/assets?action=registerUpload', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
                 body: JSON.stringify({
                     registerUploadRequest: {
                         recipes: ['urn:li:digitalmediaRecipe:feedshare-image'],
-                        owner: `urn:li:person:${req.body.personId}`,
+                        owner: `urn:li:person:${personId}`,
                         serviceRelationships: [
                             {
                                 relationshipType: 'OWNER',
