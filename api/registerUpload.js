@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-        const { accessToken, personId } = req.body;
+        const { accessToken, personId, file } = req.body;
 
         try {
             const registerResponse = await fetch('https://api.linkedin.com/v2/assets?action=registerUpload', {
@@ -41,6 +41,18 @@ module.exports = async (req, res) => {
 
             const uploadUrl = registerData.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl;
             const assetId = registerData.value.asset;
+
+            const uploadResponse = await fetch(uploadUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': file.type,
+                },
+                body: file,
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Erreur lors de l\'upload du fichier');
+            }
 
             res.status(200).json({ uploadUrl, assetId });
         } catch (error) {
